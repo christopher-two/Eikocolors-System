@@ -11,6 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import org.christophertwo.eikocolors.core.common.RoutesHome
+import org.christophertwo.eikocolors.feature.clients.presentation.ClientsRoot
 import org.christophertwo.eikocolors.feature.works.presentation.WorksRoot
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -31,6 +32,9 @@ fun NavigationHome(
             )
         }
         composable<RoutesHome.Clients> {
+            ClientsRoot(
+                viewModel = koinViewModel()
+            )
         }
     }
 

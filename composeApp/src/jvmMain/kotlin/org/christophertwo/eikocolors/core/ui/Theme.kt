@@ -14,7 +14,7 @@ import com.materialkolor.dynamiccolor.ColorSpec
 @Composable
 fun EikoColorsSystemTheme(
     isDarkTheme: Boolean = isSystemInDarkTheme(),
-    seedColor: Color = Color(0xFFFF68A0),
+    seedColor: Color = Color(0xFF68FFD4),
     content: @Composable () -> Unit
 ) {
     DynamicMaterialTheme(

@@ -224,8 +224,10 @@ private fun WorksScreen(
 
         if (state.showAddWorkDialog) {
             AddWorkDialog(
+                availableClients = state.availableClients,
                 onDismiss = { onAction(WorksAction.OnDismissDialog) },
-                onSave = { onAction(WorksAction.OnSaveWork(it)) }
+                onSave = { onAction(WorksAction.OnSaveWork(it)) },
+                onSaveClient = { onAction(WorksAction.OnSaveClient(it)) }
             )
         }
 

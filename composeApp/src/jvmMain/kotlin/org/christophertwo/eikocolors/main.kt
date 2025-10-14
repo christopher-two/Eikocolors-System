@@ -34,7 +34,7 @@ fun main() = application {
     ) {
         val navControllerApp = rememberNavController()
         EikoColorsSystemTheme(
-            isDarkTheme = true
+            isDarkTheme = false
         ) {
             NavigationStart(
                 navController = navControllerApp,

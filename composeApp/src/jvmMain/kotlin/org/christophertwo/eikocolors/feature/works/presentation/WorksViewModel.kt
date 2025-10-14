@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import org.christophertwo.eikocolors.feature.clients.domain.GetAllClientsUseCase
+import org.christophertwo.eikocolors.feature.clients.domain.SaveClientUseCase
 import org.christophertwo.eikocolors.feature.works.domain.*
 import org.christophertwo.eikocolors.feature.works.domain.model.WorkStatus
 
@@ -12,7 +14,9 @@ class WorksViewModel(
     private val getOverdueWorksUseCase: GetOverdueWorksUseCase,
     private val saveWorkUseCase: SaveWorkUseCase,
     private val updateWorkUseCase: UpdateWorkUseCase,
-    private val deleteWorkUseCase: DeleteWorkUseCase
+    private val deleteWorkUseCase: DeleteWorkUseCase,
+    private val getAllClientsUseCase: GetAllClientsUseCase,
+    private val saveClientUseCase: SaveClientUseCase
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -21,13 +25,15 @@ class WorksViewModel(
     val state = combine(
         _state,
         getAllWorksUseCase(),
-        getOverdueWorksUseCase()
-    ) { currentState, allWorks, overdueWorks ->
+        getOverdueWorksUseCase(),
+        getAllClientsUseCase()
+    ) { currentState, allWorks, overdueWorks, clients ->
         currentState.copy(
             works = allWorks,
             pendingWorks = allWorks.filter { it.status == WorkStatus.PENDING },
             inProgressWorks = allWorks.filter { it.status == WorkStatus.IN_PROGRESS },
-            overdueWorks = overdueWorks
+            overdueWorks = overdueWorks,
+            availableClients = clients
         )
     }
         .onStart {
@@ -129,6 +135,18 @@ class WorksViewModel(
             is WorksAction.OnFilterChange -> {
                 _state.update {
                     it.copy(selectedFilter = action.filter)
+                }
+            }
+
+            is WorksAction.OnSaveClient -> {
+                viewModelScope.launch {
+                    try {
+                        saveClientUseCase(action.client)
+                    } catch (e: Exception) {
+                        _state.update {
+                            it.copy(error = e.message)
+                        }
+                    }
                 }
             }
         }
