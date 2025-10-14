@@ -1,4 +1,4 @@
-rootProject.name = "eikocolors"
+rootProject.name = "EikoColorsSystem"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
