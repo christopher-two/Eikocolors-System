@@ -43,6 +43,7 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+            implementation("com.github.librepdf:openpdf:3.0.0")
         }
     }
 }

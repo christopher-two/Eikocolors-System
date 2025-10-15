@@ -33,7 +33,7 @@ import kotlin.time.ExperimentalTime
 
 @Composable
 fun ClientsRoot(
-    viewModel: ClientsViewModel = viewModel()
+    viewModel: ClientsViewModel
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 

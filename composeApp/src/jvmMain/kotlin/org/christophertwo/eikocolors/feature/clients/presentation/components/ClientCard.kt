@@ -64,7 +64,7 @@ fun ClientCard(
                     Icon(
                         imageVector = FontAwesomeIcons.Solid.Building,
                         contentDescription = null,
-                        modifier = Modifier.size(24.dp),
+                        modifier = Modifier.size(20.dp),
                         tint = MaterialTheme.colorScheme.primary
                     )
                     Spacer(modifier = Modifier.width(6.dp))
@@ -86,7 +86,7 @@ fun ClientCard(
                 Icon(
                     imageVector = FontAwesomeIcons.Solid.Envelope,
                     contentDescription = null,
-                    modifier = Modifier.size(24.dp),
+                    modifier = Modifier.size(20.dp),
                     tint = MaterialTheme.colorScheme.secondary
                 )
                 Spacer(modifier = Modifier.width(6.dp))
@@ -106,7 +106,7 @@ fun ClientCard(
                 Icon(
                     imageVector = FontAwesomeIcons.Solid.Phone,
                     contentDescription = null,
-                    modifier = Modifier.size(24.dp),
+                    modifier = Modifier.size(20.dp),
                     tint = MaterialTheme.colorScheme.secondary
                 )
                 Spacer(modifier = Modifier.width(6.dp))
@@ -157,7 +157,7 @@ private fun WorkStatItem(
         Icon(
             imageVector = icon,
             contentDescription = null,
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier.size(20.dp),
             tint = tint
         )
         Spacer(modifier = Modifier.width(4.dp))

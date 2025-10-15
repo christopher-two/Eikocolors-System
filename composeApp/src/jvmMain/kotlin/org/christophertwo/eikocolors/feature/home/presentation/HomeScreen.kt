@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import org.christophertwo.eikocolors.core.ui.EikoColorsSystemTheme
@@ -53,10 +54,10 @@ private fun HomeScreen(
                                     Icon(
                                         imageVector = item.second,
                                         contentDescription = null,
-                                        modifier = Modifier.size(24.dp)
+                                        modifier = Modifier.size(30.dp)
                                     )
                                 },
-                                label = { Text(text = item.first.displayName) }
+                                label = { Text(text = item.first.displayName, fontSize = 16.sp) }
                             )
                         }
                     }

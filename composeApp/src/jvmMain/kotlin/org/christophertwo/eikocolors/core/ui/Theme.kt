@@ -21,7 +21,7 @@ fun EikoColorsSystemTheme(
         seedColor = seedColor,
         isDark = isDarkTheme,
         specVersion = ColorSpec.SpecVersion.SPEC_2025,
-        style = PaletteStyle.Expressive,
+        style = PaletteStyle.Monochrome,
         content = {
             Surface(
                 color = colorScheme.background,

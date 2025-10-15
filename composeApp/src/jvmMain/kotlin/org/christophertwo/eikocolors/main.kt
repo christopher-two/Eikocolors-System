@@ -4,6 +4,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import androidx.navigation.compose.rememberNavController
+import org.christophertwo.eikocolors.core.common.PdfCreator
 import org.christophertwo.eikocolors.core.common.RoutesStart
 import org.christophertwo.eikocolors.core.ui.EikoColorsSystemTheme
 import org.christophertwo.eikocolors.di.dataModule
@@ -11,6 +12,7 @@ import org.christophertwo.eikocolors.di.useCaseModule
 import org.christophertwo.eikocolors.di.viewModelModule
 import org.christophertwo.eikocolors.feature.navigation.NavigationStart
 import org.koin.core.context.GlobalContext.startKoin
+
 
 fun main() = application {
     startKoin {
@@ -27,6 +29,7 @@ fun main() = application {
         width = 1200.dp,
         height = 800.dp
     )
+
     Window(
         onCloseRequest = ::exitApplication,
         title = "Eiko Colors System",
@@ -34,7 +37,7 @@ fun main() = application {
     ) {
         val navControllerApp = rememberNavController()
         EikoColorsSystemTheme(
-            isDarkTheme = false
+            isDarkTheme = true
         ) {
             NavigationStart(
                 navController = navControllerApp,
