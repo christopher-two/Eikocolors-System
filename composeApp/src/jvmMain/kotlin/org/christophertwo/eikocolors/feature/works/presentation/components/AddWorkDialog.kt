@@ -8,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -67,408 +68,427 @@ fun AddWorkDialog(
             dueMonth.isNotBlank() &&
             dueYear.isNotBlank()
 
-    Dialog(onDismissRequest = onDismiss) {
-        Surface(
+    Surface(
+        modifier = Modifier
+            .fillMaxHeight()
+            .width(480.dp)
+            .shadow(8.dp),
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = 2.dp
+    ) {
+        Column(
             modifier = Modifier
-                .width(650.dp)
-                .heightIn(max = 750.dp),
-            shape = RoundedCornerShape(16.dp),
-            color = MaterialTheme.colorScheme.surface
+                .fillMaxSize()
+                .padding(24.dp)
         ) {
+            // Header
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Nuevo Trabajo",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold
+                )
+
+                IconButton(onClick = onDismiss) {
+                    Icon(
+                        imageVector = FontAwesomeIcons.Solid.TimesCircle,
+                        contentDescription = "Cerrar",
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
+
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 20.dp),
+                color = MaterialTheme.colorScheme.outlineVariant
+            )
+
+            // Form
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp)
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                // Header
-                Row(
+                // Title
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text("Título *") },
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Nuevo Trabajo",
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    IconButton(onClick = onDismiss) {
+                    singleLine = true,
+                    leadingIcon = {
                         Icon(
-                            imageVector = FontAwesomeIcons.Solid.Times,
-                            contentDescription = "Cerrar",
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                }
-
-                HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
-
-                // Form
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    // Title
-                    OutlinedTextField(
-                        value = title,
-                        onValueChange = { title = it },
-                        label = { Text("Título *") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        leadingIcon = {
-                            Icon(
-                                imageVector = FontAwesomeIcons.Solid.Briefcase,
-                                contentDescription = null,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                    )
-
-                    // Description
-                    OutlinedTextField(
-                        value = description,
-                        onValueChange = { description = it },
-                        label = { Text("Descripción *") },
-                        modifier = Modifier.fillMaxWidth(),
-                        minLines = 3,
-                        maxLines = 5
-                    )
-
-                    // Client Selector
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-                        )
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = "Cliente *",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold
-                                )
-
-                                TextButton(
-                                    onClick = { showNewClientDialog = true }
-                                ) {
-                                    Icon(
-                                        imageVector = FontAwesomeIcons.Solid.UserPlus,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(24.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Text("Nuevo Cliente")
-                                }
-                            }
-
-                            if (selectedClient != null) {
-                                Card(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.primaryContainer
-                                    )
-                                ) {
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(12.dp),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Column(modifier = Modifier.weight(1f)) {
-                                            Text(
-                                                text = selectedClient!!.name,
-                                                style = MaterialTheme.typography.titleMedium,
-                                                fontWeight = FontWeight.Bold,
-                                                color = MaterialTheme.colorScheme.onPrimaryContainer
-                                            )
-                                            if (selectedClient!!.company != null) {
-                                                Text(
-                                                    text = selectedClient!!.company!!,
-                                                    style = MaterialTheme.typography.bodyMedium,
-                                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-                                                )
-                                            }
-                                        }
-                                        IconButton(onClick = { selectedClient = null }) {
-                                            Icon(
-                                                imageVector = FontAwesomeIcons.Solid.Times,
-                                                contentDescription = "Cambiar",
-                                                modifier = Modifier.size(24.dp),
-                                                tint = MaterialTheme.colorScheme.onPrimaryContainer
-                                            )
-                                        }
-                                    }
-                                }
-                            } else {
-                                Button(
-                                    onClick = { showClientSelector = true },
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Icon(
-                                        imageVector = FontAwesomeIcons.Solid.Users,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(24.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text("Seleccionar Cliente")
-                                }
-                            }
-                        }
-                    }
-
-                    // Status
-                    var expandedStatus by remember { mutableStateOf(false) }
-                    Box {
-                        OutlinedTextField(
-                            value = when (status) {
-                                WorkStatus.PENDING -> "Pendiente"
-                                WorkStatus.IN_PROGRESS -> "En Progreso"
-                                WorkStatus.COMPLETED -> "Completado"
-                                WorkStatus.CANCELLED -> "Cancelado"
-                            },
-                            onValueChange = {},
-                            label = { Text("Estado") },
-                            readOnly = true,
-                            modifier = Modifier.fillMaxWidth(),
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = FontAwesomeIcons.Solid.Tasks,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            },
-                            trailingIcon = {
-                                IconButton(onClick = { expandedStatus = true }) {
-                                    Icon(
-                                        imageVector = FontAwesomeIcons.Solid.ChevronDown,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(24.dp)
-                                    )
-                                }
-                            }
-                        )
-                        DropdownMenu(
-                            expanded = expandedStatus,
-                            onDismissRequest = { expandedStatus = false }
-                        ) {
-                            WorkStatus.entries.forEach { statusOption ->
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            when (statusOption) {
-                                                WorkStatus.PENDING -> "Pendiente"
-                                                WorkStatus.IN_PROGRESS -> "En Progreso"
-                                                WorkStatus.COMPLETED -> "Completado"
-                                                WorkStatus.CANCELLED -> "Cancelado"
-                                            }
-                                        )
-                                    },
-                                    onClick = {
-                                        status = statusOption
-                                        expandedStatus = false
-                                    }
-                                )
-                            }
-                        }
-                    }
-
-                    // Priority
-                    var expandedPriority by remember { mutableStateOf(false) }
-                    Box {
-                        OutlinedTextField(
-                            value = when (priority) {
-                                WorkPriority.LOW -> "Baja"
-                                WorkPriority.MEDIUM -> "Media"
-                                WorkPriority.HIGH -> "Alta"
-                                WorkPriority.URGENT -> "Urgente"
-                            },
-                            onValueChange = {},
-                            label = { Text("Prioridad") },
-                            readOnly = true,
-                            modifier = Modifier.fillMaxWidth(),
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = FontAwesomeIcons.Solid.ExclamationCircle,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            },
-                            trailingIcon = {
-                                IconButton(onClick = { expandedPriority = true }) {
-                                    Icon(
-                                        imageVector = FontAwesomeIcons.Solid.ChevronDown,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(24.dp)
-                                    )
-                                }
-                            }
-                        )
-                        DropdownMenu(
-                            expanded = expandedPriority,
-                            onDismissRequest = { expandedPriority = false }
-                        ) {
-                            WorkPriority.entries.forEach { priorityOption ->
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            when (priorityOption) {
-                                                WorkPriority.LOW -> "Baja"
-                                                WorkPriority.MEDIUM -> "Media"
-                                                WorkPriority.HIGH -> "Alta"
-                                                WorkPriority.URGENT -> "Urgente"
-                                            }
-                                        )
-                                    },
-                                    onClick = {
-                                        priority = priorityOption
-                                        expandedPriority = false
-                                    }
-                                )
-                            }
-                        }
-                    }
-
-                    // Due Date
-                    Text(
-                        text = "Fecha de entrega *",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                        fontWeight = FontWeight.Bold
-                    )
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        OutlinedTextField(
-                            value = dueDayOfMonth,
-                            onValueChange = {
-                                if (it.length <= 2 && it.all { char -> char.isDigit() }) dueDayOfMonth = it
-                            },
-                            label = { Text("Día") },
-                            modifier = Modifier.weight(1f),
-                            singleLine = true,
-                            placeholder = { Text("DD") }
-                        )
-                        OutlinedTextField(
-                            value = dueMonth,
-                            onValueChange = { if (it.length <= 2 && it.all { char -> char.isDigit() }) dueMonth = it },
-                            label = { Text("Mes") },
-                            modifier = Modifier.weight(1f),
-                            singleLine = true,
-                            placeholder = { Text("MM") }
-                        )
-                        OutlinedTextField(
-                            value = dueYear,
-                            onValueChange = { if (it.length <= 4 && it.all { char -> char.isDigit() }) dueYear = it },
-                            label = { Text("Año") },
-                            modifier = Modifier.weight(1f),
-                            singleLine = true,
-                            placeholder = { Text("AAAA") }
-                        )
-                    }
-
-                    // Estimated Hours
-                    OutlinedTextField(
-                        value = estimatedHours,
-                        onValueChange = { estimatedHours = it },
-                        label = { Text("Horas estimadas") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        leadingIcon = {
-                            Icon(
-                                imageVector = FontAwesomeIcons.Solid.Clock,
-                                contentDescription = null,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                    )
-
-                    // Notes
-                    OutlinedTextField(
-                        value = notes,
-                        onValueChange = { notes = it },
-                        label = { Text("Notas") },
-                        modifier = Modifier.fillMaxWidth(),
-                        minLines = 3,
-                        maxLines = 5
-                    )
-                }
-
-                HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
-
-                // Actions
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    OutlinedButton(
-                        onClick = onDismiss,
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("Cancelar")
-                    }
-
-                    Button(
-                        onClick = {
-                            if (selectedClient != null && isFormValid) {
-                                try {
-                                    val now = kotlin.time.Clock.System.now()
-                                        .toLocalDateTime(TimeZone.currentSystemDefault())
-
-                                    val dueDate = kotlinx.datetime.LocalDateTime(
-                                        year = dueYear.toInt(),
-                                        monthNumber = dueMonth.toInt(),
-                                        dayOfMonth = dueDayOfMonth.toInt(),
-                                        hour = 23,
-                                        minute = 59
-                                    )
-
-                                    val newWork = Work(
-                                        id = UUID.randomUUID().toString(),
-                                        title = title,
-                                        description = description,
-                                        clientId = selectedClient!!.id,
-                                        clientName = selectedClient!!.name,
-                                        status = status,
-                                        priority = priority,
-                                        dueDate = dueDate,
-                                        createdAt = now,
-                                        updatedAt = now,
-                                        estimatedHours = estimatedHours.toDoubleOrNull(),
-                                        actualHours = null,
-                                        notes = notes.ifBlank { null }
-                                    )
-
-                                    onSave(newWork)
-                                } catch (_: Exception) {
-                                    // Handle error
-                                }
-                            }
-                        },
-                        modifier = Modifier.weight(1f),
-                        enabled = isFormValid
-                    ) {
-                        Icon(
-                            imageVector = FontAwesomeIcons.Solid.Save,
+                            imageVector = FontAwesomeIcons.Solid.Briefcase,
                             contentDescription = null,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(18.dp)
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Crear Trabajo")
                     }
+                )
+
+                // Description
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text("Descripción *") },
+                    modifier = Modifier.fillMaxWidth(),
+                    minLines = 3,
+                    maxLines = 5,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = FontAwesomeIcons.Solid.AlignLeft,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                )
+
+                // Client Selector
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Cliente *",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            TextButton(
+                                onClick = { showNewClientDialog = true }
+                            ) {
+                                Icon(
+                                    imageVector = FontAwesomeIcons.Solid.UserPlus,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text("Nuevo", style = MaterialTheme.typography.labelMedium)
+                            }
+                        }
+
+                        if (selectedClient != null) {
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                                )
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(12.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text(
+                                            text = selectedClient!!.name,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                                        )
+                                        if (selectedClient!!.company != null) {
+                                            Text(
+                                                text = selectedClient!!.company!!,
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                                            )
+                                        }
+                                    }
+                                    IconButton(onClick = { selectedClient = null }) {
+                                        Icon(
+                                            imageVector = FontAwesomeIcons.Solid.Times,
+                                            contentDescription = "Cambiar",
+                                            modifier = Modifier.size(16.dp),
+                                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                        )
+                                    }
+                                }
+                            }
+                        } else {
+                            OutlinedButton(
+                                onClick = { showClientSelector = true },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(
+                                    imageVector = FontAwesomeIcons.Solid.Users,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Seleccionar Cliente")
+                            }
+                        }
+                    }
+                }
+
+                // Status
+                var expandedStatus by remember { mutableStateOf(false) }
+                Box {
+                    OutlinedTextField(
+                        value = when (status) {
+                            WorkStatus.PENDING -> "Pendiente"
+                            WorkStatus.IN_PROGRESS -> "En Progreso"
+                            WorkStatus.COMPLETED -> "Completado"
+                            WorkStatus.CANCELLED -> "Cancelado"
+                        },
+                        onValueChange = {},
+                        label = { Text("Estado") },
+                        readOnly = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        leadingIcon = {
+                            Icon(
+                                imageVector = FontAwesomeIcons.Solid.InfoCircle,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        },
+                        trailingIcon = {
+                            IconButton(onClick = { expandedStatus = true }) {
+                                Icon(
+                                    imageVector = FontAwesomeIcons.Solid.ChevronDown,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+                    )
+                    DropdownMenu(
+                        expanded = expandedStatus,
+                        onDismissRequest = { expandedStatus = false }
+                    ) {
+                        WorkStatus.entries.forEach { statusOption ->
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        when (statusOption) {
+                                            WorkStatus.PENDING -> "Pendiente"
+                                            WorkStatus.IN_PROGRESS -> "En Progreso"
+                                            WorkStatus.COMPLETED -> "Completado"
+                                            WorkStatus.CANCELLED -> "Cancelado"
+                                        }
+                                    )
+                                },
+                                onClick = {
+                                    status = statusOption
+                                    expandedStatus = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                // Priority
+                var expandedPriority by remember { mutableStateOf(false) }
+                Box {
+                    OutlinedTextField(
+                        value = when (priority) {
+                            WorkPriority.LOW -> "Baja"
+                            WorkPriority.MEDIUM -> "Media"
+                            WorkPriority.HIGH -> "Alta"
+                            WorkPriority.URGENT -> "Urgente"
+                        },
+                        onValueChange = {},
+                        label = { Text("Prioridad") },
+                        readOnly = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        leadingIcon = {
+                            Icon(
+                                imageVector = FontAwesomeIcons.Solid.Flag,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        },
+                        trailingIcon = {
+                            IconButton(onClick = { expandedPriority = true }) {
+                                Icon(
+                                    imageVector = FontAwesomeIcons.Solid.ChevronDown,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+                    )
+                    DropdownMenu(
+                        expanded = expandedPriority,
+                        onDismissRequest = { expandedPriority = false }
+                    ) {
+                        WorkPriority.entries.forEach { priorityOption ->
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        when (priorityOption) {
+                                            WorkPriority.LOW -> "Baja"
+                                            WorkPriority.MEDIUM -> "Media"
+                                            WorkPriority.HIGH -> "Alta"
+                                            WorkPriority.URGENT -> "Urgente"
+                                        }
+                                    )
+                                },
+                                onClick = {
+                                    priority = priorityOption
+                                    expandedPriority = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                // Due Date
+                Text(
+                    text = "Fecha de entrega *",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    fontWeight = FontWeight.Bold
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    OutlinedTextField(
+                        value = dueDayOfMonth,
+                        onValueChange = {
+                            if (it.length <= 2 && it.all { char -> char.isDigit() }) dueDayOfMonth = it
+                        },
+                        label = { Text("Día") },
+                        modifier = Modifier.weight(1f),
+                        singleLine = true,
+                        placeholder = { Text("DD") }
+                    )
+                    OutlinedTextField(
+                        value = dueMonth,
+                        onValueChange = { if (it.length <= 2 && it.all { char -> char.isDigit() }) dueMonth = it },
+                        label = { Text("Mes") },
+                        modifier = Modifier.weight(1f),
+                        singleLine = true,
+                        placeholder = { Text("MM") }
+                    )
+                    OutlinedTextField(
+                        value = dueYear,
+                        onValueChange = { if (it.length <= 4 && it.all { char -> char.isDigit() }) dueYear = it },
+                        label = { Text("Año") },
+                        modifier = Modifier.weight(1f),
+                        singleLine = true,
+                        placeholder = { Text("AAAA") }
+                    )
+                }
+
+                // Estimated Hours
+                OutlinedTextField(
+                    value = estimatedHours,
+                    onValueChange = { estimatedHours = it },
+                    label = { Text("Horas estimadas") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = FontAwesomeIcons.Solid.Clock,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                )
+
+                // Notes
+                OutlinedTextField(
+                    value = notes,
+                    onValueChange = { notes = it },
+                    label = { Text("Notas") },
+                    modifier = Modifier.fillMaxWidth(),
+                    minLines = 3,
+                    maxLines = 5,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = FontAwesomeIcons.Solid.StickyNote,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                )
+            }
+
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 20.dp),
+                color = MaterialTheme.colorScheme.outlineVariant
+            )
+
+            // Actions
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                OutlinedButton(
+                    onClick = onDismiss,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Cancelar")
+                }
+
+                Button(
+                    onClick = {
+                        if (selectedClient != null && isFormValid) {
+                            try {
+                                val now = kotlin.time.Clock.System.now()
+                                    .toLocalDateTime(TimeZone.currentSystemDefault())
+
+                                val dueDate = kotlinx.datetime.LocalDateTime(
+                                    year = dueYear.toInt(),
+                                    monthNumber = dueMonth.toInt(),
+                                    dayOfMonth = dueDayOfMonth.toInt(),
+                                    hour = 23,
+                                    minute = 59
+                                )
+
+                                val newWork = Work(
+                                    id = UUID.randomUUID().toString(),
+                                    title = title,
+                                    description = description,
+                                    clientId = selectedClient!!.id,
+                                    clientName = selectedClient!!.name,
+                                    status = status,
+                                    priority = priority,
+                                    dueDate = dueDate,
+                                    createdAt = now,
+                                    updatedAt = now,
+                                    estimatedHours = estimatedHours.toDoubleOrNull(),
+                                    actualHours = null,
+                                    notes = notes.ifBlank { null }
+                                )
+
+                                onSave(newWork)
+                            } catch (_: Exception) {
+                                // Handle error
+                            }
+                        }
+                    },
+                    modifier = Modifier.weight(1f),
+                    enabled = isFormValid
+                ) {
+                    Icon(
+                        imageVector = FontAwesomeIcons.Solid.Save,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Crear")
                 }
             }
         }
@@ -726,3 +746,4 @@ fun AddWorkDialog(
         }
     }
 }
+

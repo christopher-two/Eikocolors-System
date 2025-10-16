@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -20,10 +19,9 @@ import compose.icons.FontAwesomeIcons
 import compose.icons.fontawesomeicons.Solid
 import compose.icons.fontawesomeicons.solid.*
 import org.christophertwo.eikocolors.core.ui.EikoColorsSystemTheme
-import org.christophertwo.eikocolors.feature.works.domain.model.WorkStatus
 import org.christophertwo.eikocolors.feature.works.domain.model.WorksFilter
 import org.christophertwo.eikocolors.feature.works.presentation.components.AddWorkDialog
-import org.christophertwo.eikocolors.feature.works.presentation.components.WorkDialog
+import org.christophertwo.eikocolors.feature.works.presentation.components.WorkDetailsPanel
 import org.christophertwo.eikocolors.feature.works.presentation.components.WorksSection
 
 @Composable
@@ -43,11 +41,16 @@ private fun WorksScreen(
     state: WorksState,
     onAction: (WorksAction) -> Unit,
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        // Main Content - Left Side
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+                .weight(1f)
+                .fillMaxHeight()
                 .padding(24.dp)
         ) {
             // Header
@@ -172,7 +175,6 @@ private fun WorksScreen(
 
                             if (state.works.isEmpty()) {
                                 EmptyState(
-                                    message = "No hay trabajos registrados",
                                     onAddClick = { onAction(WorksAction.OnAddWorkClick) }
                                 )
                             }
@@ -210,11 +212,20 @@ private fun WorksScreen(
                     }
                 }
             }
+
+            // Error Snackbar
+            state.error?.let { error ->
+                Snackbar(
+                    modifier = Modifier.padding(top = 16.dp)
+                ) {
+                    Text(error)
+                }
+            }
         }
 
-        // Dialogs
+        // Right Side Panel - Work Details or Add Work
         if (state.showWorkDialog && state.selectedWork != null) {
-            WorkDialog(
+            WorkDetailsPanel(
                 work = state.selectedWork,
                 onDismiss = { onAction(WorksAction.OnDismissDialog) },
                 onUpdate = { onAction(WorksAction.OnUpdateWork(it)) },
@@ -229,17 +240,6 @@ private fun WorksScreen(
                 onSave = { onAction(WorksAction.OnSaveWork(it)) },
                 onSaveClient = { onAction(WorksAction.OnSaveClient(it)) }
             )
-        }
-
-        // Error Snackbar
-        state.error?.let { error ->
-            Snackbar(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(16.dp)
-            ) {
-                Text(error)
-            }
         }
     }
 }
@@ -306,7 +306,6 @@ private fun FilterChip(
 
 @Composable
 private fun EmptyState(
-    message: String,
     onAddClick: () -> Unit
 ) {
     Box(
@@ -326,7 +325,7 @@ private fun EmptyState(
                 tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f)
             )
             Text(
-                text = message,
+                text = "No hay trabajos registrados",
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
             )
@@ -342,7 +341,6 @@ private fun EmptyState(
         }
     }
 }
-
 
 
 @Preview

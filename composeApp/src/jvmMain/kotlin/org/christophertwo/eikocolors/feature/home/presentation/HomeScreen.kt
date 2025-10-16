@@ -57,7 +57,7 @@ private fun HomeScreen(
                                         modifier = Modifier.size(30.dp)
                                     )
                                 },
-                                label = { Text(text = item.first.displayName, fontSize = 16.sp) }
+                                modifier = Modifier.padding(top = 4.dp),
                             )
                         }
                     }
