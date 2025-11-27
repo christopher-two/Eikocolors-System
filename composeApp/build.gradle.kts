@@ -1,4 +1,5 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.internal.builtins.StandardNames.FqNames.target
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -6,6 +7,8 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
     alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.androidx.room)
 }
 
 kotlin {
@@ -33,6 +36,13 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
 
+            //Firebase
+            implementation("dev.gitlive:firebase-firestore:2.4.0")
+
+            //Room
+            implementation(libs.androidx.room.runtime)
+            implementation(libs.androidx.sqlite.bundled)
+
             //Utils
             implementation(libs.material.kolor)
             implementation(libs.composeIcons.fontAwesome)
@@ -46,6 +56,14 @@ kotlin {
             implementation("com.github.librepdf:openpdf:3.0.0")
         }
     }
+}
+
+room {
+    schemaDirectory("jvm", "$projectDir/schemas/jvm")
+}
+
+dependencies {
+    add("kspJvm", libs.androidx.room.compiler)
 }
 
 configurations.all {

@@ -1,11 +1,11 @@
 package org.christophertwo.eikocolors.feature.works.domain
 
-import org.christophertwo.eikocolors.feature.works.desingsystem.WorkRepository
+import org.christophertwo.eikocolors.domain.repository.AppRepository
 
 class DeleteWorkUseCase(
-    private val workRepository: WorkRepository
+    private val appRepository: AppRepository
 ) {
     suspend operator fun invoke(id: String) {
-        workRepository.deleteWork(id)
+        appRepository.deleteWork(id)
     }
 }

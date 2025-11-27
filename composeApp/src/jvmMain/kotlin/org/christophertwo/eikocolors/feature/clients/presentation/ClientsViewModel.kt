@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.christophertwo.eikocolors.feature.clients.data.ClientRepositoryImpl
+import org.christophertwo.eikocolors.domain.usecase.SyncClientsUseCase
 import org.christophertwo.eikocolors.feature.clients.domain.DeleteClientUseCase
 import org.christophertwo.eikocolors.feature.clients.domain.GetAllClientsUseCase
 import org.christophertwo.eikocolors.feature.clients.domain.SaveClientUseCase
@@ -16,17 +16,17 @@ import org.christophertwo.eikocolors.feature.clients.domain.SearchClientsUseCase
 import org.christophertwo.eikocolors.feature.clients.domain.UpdateClientUseCase
 import org.christophertwo.eikocolors.feature.clients.domain.model.ClientStatus
 
-class ClientsViewModel : ViewModel() {
+class ClientsViewModel(
+    private val getAllClientsUseCase: GetAllClientsUseCase,
+    private val saveClientUseCase: SaveClientUseCase,
+    private val updateClientUseCase: UpdateClientUseCase,
+    private val deleteClientUseCase: DeleteClientUseCase,
+    private val searchClientsUseCase: SearchClientsUseCase,
+    private val syncClientsUseCase: SyncClientsUseCase
+) : ViewModel() {
 
     private var hasLoadedInitialData = false
 
-    // TODO: Inyectar dependencias con DI
-    private val repository = ClientRepositoryImpl()
-    private val getAllClientsUseCase = GetAllClientsUseCase(repository)
-    private val saveClientUseCase = SaveClientUseCase(repository)
-    private val updateClientUseCase = UpdateClientUseCase(repository)
-    private val deleteClientUseCase = DeleteClientUseCase(repository)
-    private val searchClientsUseCase = SearchClientsUseCase(repository)
 
     private val _state = MutableStateFlow(ClientsState())
     val state = _state
@@ -145,6 +145,15 @@ class ClientsViewModel : ViewModel() {
 
     private fun loadClients() {
         viewModelScope.launch {
+            // Sincronizar datos de Firebase la primera vez
+            if (!hasLoadedInitialData) {
+                try {
+                    syncClientsUseCase()
+                } catch (e: Exception) {
+                    _state.update { it.copy(error = "Error al sincronizar: ${e.message}") }
+                }
+            }
+
             getAllClientsUseCase().collect { clients ->
                 _state.update {
                     it.copy(

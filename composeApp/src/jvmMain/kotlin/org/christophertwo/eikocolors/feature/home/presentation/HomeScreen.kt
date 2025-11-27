@@ -58,6 +58,14 @@ private fun HomeScreen(
                                     )
                                 },
                                 modifier = Modifier.padding(top = 4.dp),
+                                label = {
+                                    Text(
+                                        text = item.first.displayName,
+                                        style = MaterialTheme.typography.bodyMedium.copy(
+                                            fontSize = 12.sp
+                                        )
+                                    )
+                                }
                             )
                         }
                     }

@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import org.christophertwo.eikocolors.domain.usecase.SyncClientsUseCase
+import org.christophertwo.eikocolors.domain.usecase.SyncWorksUseCase
 import org.christophertwo.eikocolors.feature.clients.domain.GetAllClientsUseCase
 import org.christophertwo.eikocolors.feature.clients.domain.SaveClientUseCase
 import org.christophertwo.eikocolors.feature.works.domain.*
@@ -16,7 +18,9 @@ class WorksViewModel(
     private val updateWorkUseCase: UpdateWorkUseCase,
     private val deleteWorkUseCase: DeleteWorkUseCase,
     private val getAllClientsUseCase: GetAllClientsUseCase,
-    private val saveClientUseCase: SaveClientUseCase
+    private val saveClientUseCase: SaveClientUseCase,
+    private val syncWorksUseCase: SyncWorksUseCase,
+    private val syncClientsUseCase: SyncClientsUseCase
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -40,6 +44,15 @@ class WorksViewModel(
             if (!hasLoadedInitialData) {
                 _state.update { it.copy(isLoading = true) }
                 hasLoadedInitialData = true
+                // Sincronizar datos de Firebase la primera vez
+                viewModelScope.launch {
+                    try {
+                        syncWorksUseCase()
+                        syncClientsUseCase()
+                    } catch (e: Exception) {
+                        _state.update { it.copy(error = "Error al sincronizar: ${e.message}") }
+                    }
+                }
                 _state.update { it.copy(isLoading = false) }
             }
         }

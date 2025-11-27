@@ -1,13 +1,13 @@
 package org.christophertwo.eikocolors.feature.clients.domain
 
-import org.christophertwo.eikocolors.feature.clients.desingsystem.ClientRepository
+import org.christophertwo.eikocolors.domain.repository.AppRepository
 import org.christophertwo.eikocolors.feature.clients.domain.model.Client
 
 class SaveClientUseCase(
-    private val clientRepository: ClientRepository
+    private val appRepository: AppRepository
 ) {
     suspend operator fun invoke(client: Client) {
-        clientRepository.insertClient(client)
+        appRepository.saveClient(client)
     }
 }
 
